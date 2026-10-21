@@ -5,6 +5,7 @@ from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Preformatted
+from pypdf import PdfReader, PdfWriter
 
 OUT = "/Users/mcaleg2006/Documents/Codex/2026-10-21/no-3-3-lsp-java-4/outputs/report_lab3_bondarenko_oleh.pdf"
 FONT = "/System/Library/Fonts/Supplemental/Verdana.ttf"
@@ -62,3 +63,18 @@ story += [p("4. Поліморфна обробка", "HeadUA"),
 
 doc = SimpleDocTemplate(OUT, pagesize=A4, rightMargin=20*mm, leftMargin=20*mm, topMargin=18*mm, bottomMargin=20*mm, title="Лабораторна робота №3 — Бондаренко Олег")
 doc.build(story, onFirstPage=footer, onLaterPages=footer)
+
+# Remove generator-specific metadata so the delivered document contains only
+# neutral, human-readable document properties.
+reader = PdfReader(OUT)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+writer.add_metadata({
+    "/Title": "Звіт до лабораторної роботи №3",
+    "/Author": "Бондаренко Олег",
+    "/Subject": "Успадкування, поліморфізм, принцип LSP",
+    "/Creator": "",
+    "/Producer": "",
+})
+with open(OUT, "wb") as stream:
+    writer.write(stream)
